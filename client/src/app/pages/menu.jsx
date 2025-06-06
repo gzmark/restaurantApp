@@ -33,7 +33,7 @@ const GestionMenu = () => {
 
   // Lista de imágenes disponibles
   const imagenesDisponibles = [
-    { id: 1, nombre: '1.jpeg', ruta: '/imagenes/1.jpeg' },
+    { id: 1, nombre: '1.png', ruta: '/imagenes/1.png' },
     { id: 2, nombre: '2.jpeg', ruta: '/src/Imagenes/2.jpg' },
     { id: 3, nombre: '3.jpeg', ruta: '/src/Imagenes/3.jpg' },
     { id: 4, nombre: '4.jpeg', ruta: '/src/Imagenes/4.jpg' },

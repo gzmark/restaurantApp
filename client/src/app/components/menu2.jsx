@@ -8,7 +8,7 @@ import {
 const Menu = ({ onClose }) => {
   const userData = {
     fullName: 'Nombre del Usuario',
-    role: 'mesero', // 'mesero' o 'admin'
+    role: 'admin', // 'mesero' o 'admin'
     imageUrl: 'usuarioN.png',
   };
 

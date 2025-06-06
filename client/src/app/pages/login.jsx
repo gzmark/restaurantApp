@@ -1,76 +1,133 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { User, Lock } from 'lucide-react';
+import { User, Lock, CheckCircle, XCircle, X } from 'lucide-react';
 
-export default function Login( ) {
+// Componente de Alerta Reutilizable
+const Alert = ({ type, message, onClose, autoClose = true }) => {
+  const [isVisible, setIsVisible] = useState(true);
 
+  React.useEffect(() => {
+    if (autoClose && type === 'success') {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(onClose, 300);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [autoClose, type, onClose]);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(onClose, 300);
+  };
+
+  const alertStyles = {
+    success: 'bg-gradient-to-r from-green-500 to-emerald-600 border-green-400',
+    error: 'bg-gradient-to-r from-red-500 to-rose-600 border-red-400'
+  };
+
+  const icons = {
+    success: <CheckCircle className="h-5 w-5 text-white" />,
+    error: <XCircle className="h-5 w-5 text-white" />
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div className={`fixed top-4 right-4 z-50 transform transition-all duration-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
+      <div className={`${alertStyles[type]} border-l-4 rounded-lg shadow-lg backdrop-blur-sm p-4 min-w-[300px] max-w-md`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            {icons[type]}
+            <div>
+              <p className="text-white font-medium text-sm">
+                {type === 'success' ? '¡Éxito!' : '¡Error!'}
+              </p>
+              <p className="text-white/90 text-sm">{message}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleClose}
+            className="text-white/80 hover:text-white transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [alert, setAlert] = useState(null);
   const navigate = useNavigate();
 
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//     const credentials = {
-//       email,
-//       password,
-//     };
-//   try {
-//     await setIsLoggedIn(credentials); // wait for login
-//           if (isAdmin) {
-//         navigate('/home'); // only navigate if login succeeds
-//       } else {
-//         navigate('/homeMesero');
-//       }
-//   } catch (err) {
-//     console.error("Login failed:", err);
-//     // optionally display error message to user
-//   }
-// };
+  const showAlert = (type, message) => {
+    setAlert({ type, message });
+  };
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setError('');
+  const closeAlert = () => {
+    setAlert(null);
+  };
 
-  try {
-    const res = await fetch('http://localhost:8000/api/auth/loginStaff', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
 
-    const data = await res.json();
+    try {
+      const res = await fetch('http://localhost:8000/api/auth/loginStaff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (!res.ok) throw new Error(data.message || 'Login failed');
+      const data = await res.json();
 
-    if (data.role === 'admin') {
-      navigate('/home');
-    } else if (data.role === 'mesero') {
-      navigate('/homeMesero');
-    } else {
-      setError('Unknown role');
+      if (!res.ok) throw new Error(data.message || 'Login failed');
+
+      // ✅ Mostrar alerta de éxito
+      showAlert('success', 'Inicio de sesión exitoso. Redirigiendo...');
+
+      // ✅ Guardar token en localStorage
+      localStorage.setItem("token", data.token);
+
+      // ✅ Redirigir según el rol después de un breve delay
+      setTimeout(() => {
+        if (data.role === 'admin') {
+          navigate('/home');
+        } else if (data.role === 'mesero') {
+          navigate('/homeMesero');
+        } else {
+          setError('Rol desconocido');
+        }
+      }, 1500);
+
+    } catch (err) {
+      // ✅ Mostrar alerta de error
+      showAlert('error', err.message || 'Error de inicio de sesión');
+      setError(err.message || 'Error de inicio de sesión');
     }
-  } catch (err) {
-    setError(err.message || 'Login error');
-  }
-};
-
+  };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-yellow-900"
-    >
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-yellow-900">
+      {/* Componente de Alerta */}
+      {alert && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={closeAlert}
+        />
+      )}
+
       <div className="bg-white/30 backdrop-blur-md shadow-2xl rounded-2xl p-6 max-w-sm w-full mx-4">
         <div className="flex flex-col items-center">
-          <img
-            alt="Restaurante Logo"
-            src="/usuarioLogin.png"
-            className="h-10 w-10"
-          />
-          <h2 className="mt-4 text-center text-xl font-bold text-white">
-            Iniciar sesión
-          </h2>
+          <img alt="Restaurante Logo" src="/usuarioLogin.png" className="h-10 w-10" />
+          <h2 className="mt-4 text-center text-xl font-bold text-white">Iniciar sesión</h2>
         </div>
 
         <form className="mt-6 space-y-5" onSubmit={handleLogin}>
@@ -108,6 +165,10 @@ const handleLogin = async (e) => {
             />
           </div>
 
+          {error && (
+            <div className="text-sm text-red-600 text-center">{error}</div>
+          )}
+
           <div>
             <button
               type="submit"
@@ -116,6 +177,7 @@ const handleLogin = async (e) => {
               Iniciar sesión
             </button>
           </div>
+          
         </form>
       </div>
     </div>

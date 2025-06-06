@@ -7,41 +7,26 @@ import VistaPedidos from './app/pages/pedidos';
 import DashboardMesero from './app/pages/homeMesero';
 import PedidosMesero from './app/pages/pedidosMesero';
 import GestionMenu from './app/pages/menu';
-import GestionMeseros from './app/pages/meseros'; // Nueva importación
-import GestionMesas from './app/pages/mesas'; // Nueva importación
-
+import GestionMeseros from './app/pages/meseros';
+import GestionMesas from './app/pages/mesas';
+import ProtectedRoute from "./app/components/ProtectedRoute";
 
 export default function App() {
-
-  //   const login = async (newLogin) => {
-  //   const res = await fetch('/api/auth/login', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(newLogin),
-  //   });
-  // if (!res.ok) {
-  //   throw new Error("Login failed");
-  // }
-  // return res.json(); // return user or token or whatever you need
-  // };
-
-  //<Route path="/" element={<Login setIsLoggedIn={login} />} />
-  
   return (
     <Router>
       <Routes>
+        {/* Ruta pública */}
         <Route path="/" element={<Login />} />
-        <Route path="/home" element={<DashboardAdmin />} />
-        <Route path="/homeMesero" element={<DashboardMesero />} />
-        <Route path="/usuarios" element={<VistaUsuarios />} />
-        <Route path="/pedidos" element={<VistaPedidos />} />
-        <Route path="/menu" element={<GestionMenu />} />
-        <Route path="/meseros" element={<GestionMeseros />} /> {/* Nueva ruta */}
-        <Route path="/mesas" element={<GestionMesas />} /> {/* Nueva ruta */}
-        <Route path="/pedidosMesero/:id" element={<PedidosMesero />} />
-        {/* Puedes agregar más rutas aquí */}
+
+        {/* Rutas protegidas */}
+        <Route path="/home" element={<ProtectedRoute><DashboardAdmin /></ProtectedRoute>} />
+        <Route path="/homeMesero" element={<ProtectedRoute><DashboardMesero /></ProtectedRoute>} />
+        <Route path="/usuarios" element={<ProtectedRoute><VistaUsuarios /></ProtectedRoute>} />
+        <Route path="/pedidos" element={<ProtectedRoute><VistaPedidos /></ProtectedRoute>} />
+        <Route path="/menu" element={<ProtectedRoute><GestionMenu /></ProtectedRoute>} />
+        <Route path="/meseros" element={<ProtectedRoute><GestionMeseros /></ProtectedRoute>} />
+        <Route path="/mesas" element={<ProtectedRoute><GestionMesas /></ProtectedRoute>} />
+        <Route path="/pedidosMesero/:id" element={<ProtectedRoute><PedidosMesero /></ProtectedRoute>} />
       </Routes>
     </Router>
   );
