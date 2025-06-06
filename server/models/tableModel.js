@@ -5,7 +5,7 @@ const tableSchema = new mongoose.Schema({
   capacidad: { type: Number, required: true },
   estado: { type: String, enum: ['disponible', 'ocupada', 'reservada'], default: 'disponible' },
   ubicacion: { type: String, enum: ['interior', 'terraza', 'salon-privado', 'barra'], default: 'interior' },
-  meseroAsignado: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' },
+  //meseroAsignado: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' },
   observaciones: { type: String, default: '' }
 });
 

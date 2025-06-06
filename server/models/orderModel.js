@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema({
     }
   ],
   total: Number,
-  estado: { type: String, enum: ['activo', 'finalizado'], default: 'activo' },
+  estado: { type: String, enum: ['activo', 'finalizado'], default: 'finalizado' },
   fecha: { type: Date, default: Date.now }
 });
 

@@ -11,6 +11,11 @@ const getPedidoById = async (req, res) => {
   res.status(200).json(pedido);
 };
 
+const getPedidosByMesaId = async (req, res) => {
+  const pedidos = await Pedido.find({ mesa: req.params.mesaId }).populate('productos.producto');
+  res.status(200).json(pedidos);
+};
+
 const createPedido = async (req, res) => {
   const nuevo = await Pedido.create(req.body);
   res.status(201).json(nuevo);
@@ -32,5 +37,5 @@ const finalizarPedido = async (req, res) => {
 };
 
 module.exports = {
-  getPedidos, getPedidoById, createPedido, updatePedido, deletePedido, finalizarPedido
+  getPedidos, getPedidoById, getPedidosByMesaId, createPedido, updatePedido, deletePedido, finalizarPedido
 };

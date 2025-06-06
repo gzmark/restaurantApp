@@ -1,33 +1,61 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import { User, Lock } from 'lucide-react';
 
-export default function Login( { setIsLoggedIn } ) {
+export default function Login( ) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
-
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const credentials = {
-      email,
-      password,
-    };
+//   const handleLogin = async (e) => {
+//     e.preventDefault();
+//     const credentials = {
+//       email,
+//       password,
+//     };
+//   try {
+//     await setIsLoggedIn(credentials); // wait for login
+//           if (isAdmin) {
+//         navigate('/home'); // only navigate if login succeeds
+//       } else {
+//         navigate('/homeMesero');
+//       }
+//   } catch (err) {
+//     console.error("Login failed:", err);
+//     // optionally display error message to user
+//   }
+// };
+
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError('');
+
   try {
-    await setIsLoggedIn(credentials); // wait for login
-          if (isAdmin) {
-        navigate('/home'); // only navigate if login succeeds
-      } else {
-        navigate('/homeMesero');
-      }
+    const res = await fetch('http://localhost:8000/api/auth/loginStaff', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || 'Login failed');
+
+    if (data.role === 'admin') {
+      navigate('/home');
+    } else if (data.role === 'mesero') {
+      navigate('/homeMesero');
+    } else {
+      setError('Unknown role');
+    }
   } catch (err) {
-    console.error("Login failed:", err);
-    // optionally display error message to user
+    setError(err.message || 'Login error');
   }
 };
+
 
   return (
     <div
@@ -78,17 +106,6 @@ export default function Login( { setIsLoggedIn } ) {
               className="mt-1 block w-full rounded-lg border border-[#e9a839] px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#e9a839] focus:border-[#e9a839] sm:text-sm"
               placeholder="••••••••"
             />
-          </div>
-
-          <div className="flex items-center text-white text-sm">
-            <input
-              id="isAdmin"
-              type="checkbox"
-              checked={isAdmin}
-              onChange={(e) => setIsAdmin(e.target.checked)}
-              className="mr-2"
-            />
-            <label htmlFor="isAdmin">¿Admin?</label>
           </div>
 
           <div>

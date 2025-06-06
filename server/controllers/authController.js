@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
+const staffModel = require('../models/staffModel');
 
 //@desc POST login
 //@route POST /api/auth/login
@@ -33,6 +34,50 @@ const loginUser = asyncHandler(async (req, res) => {
             throw new Error('Invalid password or user not found');
         }
 });
+
+const loginStaff = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  const staff = await staffModel.findOne({ email });
+
+  if (!staff) {
+    return res.status(401).json({ message: 'Staff not found' });
+  }
+
+  const isMatch = await bcrypt.compare(password, staff.password);
+
+  if (!isMatch) {
+    return res.status(401).json({ message: 'Invalid password' });
+  }
+
+  res.status(200).json({ role: staff.role });
+});
+
+
+// const loginStaff = asyncHandler(async (req, res) => {
+//   const { email } = req.body;
+
+//   // Skip all checks — return a fake token for any email input
+//   const token = jwt.sign(
+//     {
+//       user: {
+//         name: 'Test User',
+//         email: email || 'test@example.com',
+//         id: 'test-id',
+//         role: 'mesero',
+//       },
+//     },
+//     process.env.ACCESS_TOKEN_SECRET || 'testsecret', // fallback secret for testing
+//     { expiresIn: '1h' }
+//   );
+
+//   res.status(200).json({ token, role: 'admin' });
+// });
+
 
 //@desc POST register
 //@route POST /api/auth/register
@@ -85,4 +130,5 @@ module.exports = {
     registerUser,
     getCurrentUser,
     logoutUser,
+    loginStaff,
 };

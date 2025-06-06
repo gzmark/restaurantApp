@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import HeaderDs from '@/app/components/header';
 import Menu from '@/app/components/menu';
 import { Plus, Edit, Trash2, Users, UserCheck, UserX, X, Save } from 'lucide-react';
-import { fetchUsuarios, crearUsuario, eliminarUsuario, actualizarUsuario } from '@/api/api';
+import { fetchUsuarios, crearUsuario, eliminarUsuario, actualizarUsuario, fetchMesas  } from '@/api/api';
 
 const GestionMeseros = () => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [meseroEditando, setMeseroEditando] = useState(null);
+  const [mesasDisponibles, setMesasDisponibles] = useState([]);
   const [meseros, setMeseros] = useState([
     // {
     //   id: 1,
@@ -52,8 +53,21 @@ const GestionMeseros = () => {
     password: 'restaurante123'
   });
 
-  const mesasDisponibles = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+  //const mesasDisponibles = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
   const turnos = ['mañana', 'tarde', 'noche'];
+
+  useEffect(() => {
+  const cargarMesas = async () => {
+    try {
+      const mesas = await fetchMesas();
+      setMesasDisponibles(mesas.map(m => m.numero)); // just get table numbers
+    } catch (error) {
+      console.error('Error al obtener mesas:', error);
+    }
+  };
+
+  cargarMesas();
+}, []);
 
   useEffect(() => {
     fetchUsuarios()
@@ -252,7 +266,7 @@ const cambiarEstado = async (id) => {
               <tbody>
                 {meseros.map(mesero => (
                   <tr key={mesero._id} className="border-b hover:bg-gray-50">
-                    <td className="p-3 font-medium">{mesero.nombre}</td>
+                    <td className="p-3 font-medium">{mesero.name}</td>
                     <td className="p-3">{mesero.email}</td>
                     <td className="p-3">{mesero.telefono}</td>
                     <td className="p-3 capitalize">{mesero.turno}</td>
@@ -385,6 +399,7 @@ const cambiarEstado = async (id) => {
                 </div>
               </div>
 
+              {meseroEditando && mesasDisponibles?.length > 0 && (
               <div className="mt-4">
                 <label className="block text-sm font-medium mb-2">Mesas Asignadas</label>
                 <div className="grid grid-cols-5 gap-2">
@@ -404,6 +419,7 @@ const cambiarEstado = async (id) => {
                   ))}
                 </div>
               </div>
+              )}
 
               <div className="flex justify-end gap-2 mt-6">
                 <button

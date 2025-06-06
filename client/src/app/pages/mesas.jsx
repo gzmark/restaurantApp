@@ -8,7 +8,7 @@ const GestionMesas = () => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mesaEditando, setMesaEditando] = useState(null);
-  const [meseros, setMeseros] = useState([]);
+  //const [meseros, setMeseros] = useState([]);
   const [mesas, setMesas] = useState([
     {
       id: 1,
@@ -16,10 +16,6 @@ const GestionMesas = () => {
       capacidad: 4,
       ubicacion: 'terraza',
       estado: 'disponible',
-      meseroAsignado: 'Juan Pérez',
-      clientesActuales: 0,
-      fechaUltimaOcupacion: '2024-06-02',
-      horaUltimaOcupacion: '14:30',
       observaciones: 'Mesa junto a la ventana'
     },
     {
@@ -28,10 +24,6 @@ const GestionMesas = () => {
       capacidad: 2,
       ubicacion: 'interior',
       estado: 'ocupada',
-      meseroAsignado: 'María García',
-      clientesActuales: 2,
-      fechaUltimaOcupacion: '2024-06-03',
-      horaUltimaOcupacion: '13:15',
       observaciones: 'Mesa romántica'
     },
     {
@@ -40,10 +32,6 @@ const GestionMesas = () => {
       capacidad: 6,
       ubicacion: 'terraza',
       estado: 'reservada',
-      meseroAsignado: 'Juan Pérez',
-      clientesActuales: 0,
-      fechaUltimaOcupacion: '2024-06-03',
-      horaUltimaOcupacion: '19:00',
       observaciones: 'Reserva para las 19:00'
     },
     {
@@ -52,10 +40,6 @@ const GestionMesas = () => {
       capacidad: 8,
       ubicacion: 'salon-privado',
       estado: 'mantenimiento',
-      meseroAsignado: null,
-      clientesActuales: 0,
-      fechaUltimaOcupacion: '2024-06-01',
-      horaUltimaOcupacion: '20:45',
       observaciones: 'Reparación de silla'
     },
     {
@@ -64,28 +48,24 @@ const GestionMesas = () => {
       capacidad: 4,
       ubicacion: 'interior',
       estado: 'disponible',
-      meseroAsignado: 'María García',
-      clientesActuales: 0,
-      fechaUltimaOcupacion: '2024-06-02',
-      horaUltimaOcupacion: '12:00',
       observaciones: ''
     }
   ]);
 
 
-useEffect(() => {
-  const cargarMeseros = async () => {
-    try {
-      const usuarios = await fetchUsuarios();
-      const meserosFiltrados = usuarios.filter(u => u.role === 'mesero').map(m => ({ _id: m._id, name: m.name })); // o como lo manejes
-      setMeseros(meserosFiltrados);//.map(m => m.name));
-    } catch (error) {
-      console.error('Error cargando meseros:', error);
-    }
-  };
+// useEffect(() => {
+//   const cargarMeseros = async () => {
+//     try {
+//       const usuarios = await fetchUsuarios();
+//       const meserosFiltrados = usuarios.filter(u => u.role === 'mesero').map(m => ({ _id: m._id, name: m.name })); // o como lo manejes
+//       setMeseros(meserosFiltrados);//.map(m => m.name));
+//     } catch (error) {
+//       console.error('Error cargando meseros:', error);
+//     }
+//   };
 
-  cargarMeseros();
-}, []);
+//   cargarMeseros();
+// }, []);
  
   
   useEffect(() => {
@@ -107,20 +87,18 @@ useEffect(() => {
     capacidad: 2,
     ubicacion: 'interior',
     estado: 'disponible',
-    meseroAsignado: '',
-    clientesActuales: 0,
     observaciones: ''
   });
 
   const ubicaciones = ['interior', 'terraza', 'salon-privado', 'barra'];
-  const estados = ['disponible', 'ocupada', 'reservada', 'mantenimiento', 'limpieza'];
+  const estados = ['disponible', 'ocupada', 'reservada'];
   //const meseros = ['Juan Pérez', 'María García', 'Carlos López'];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormularioData(prev => ({
       ...prev,
-      [name]: name === 'capacidad' || name === 'clientesActuales' ? parseInt(value) || 0 : value
+      [name]: name === 'capacidad' ? parseInt(value) || 0 : value
     }));
   };
 
@@ -132,8 +110,7 @@ useEffect(() => {
         capacidad: mesa.capacidad,
         ubicacion: mesa.ubicacion,
         estado: mesa.estado,
-        meseroAsignado: mesa.meseroAsignado?._id || mesa.meseroAsignado || '',
-        clientesActuales: mesa.clientesActuales,
+        //meseroAsignado: mesa.meseroAsignado?._id || mesa.meseroAsignado || '',
         observaciones: mesa.observaciones
       });
     } else {
@@ -143,8 +120,7 @@ useEffect(() => {
         capacidad: 2,
         ubicacion: 'interior',
         estado: 'disponible',
-        meseroAsignado: '',
-        clientesActuales: 0,
+        //meseroAsignado: '',
         observaciones: ''
       });
     }
@@ -159,8 +135,7 @@ useEffect(() => {
       capacidad: 2,
       ubicacion: 'interior',
       estado: 'disponible',
-      meseroAsignado: '',
-      clientesActuales: 0,
+      //meseroAsignado: '',
       observaciones: ''
     });
   };
@@ -256,12 +231,11 @@ useEffect(() => {
   const mesasOcupadas = mesas.filter(m => m.estado === 'ocupada').length;
   const mesasReservadas = mesas.filter(m => m.estado === 'reservada').length;
   const capacidadTotal = mesas.reduce((total, mesa) => total + mesa.capacidad, 0);
-  const clientesActuales = mesas.reduce((total, mesa) => total + mesa.clientesActuales, 0);
 
-  const obtenerNombreMesero = (id) => {
-  const mesero = meseros.find(m => m._id === id);
-  return mesero ? mesero.name : 'Sin asignar';
-};
+//   const obtenerNombreMesero = (id) => {
+//   const mesero = meseros.find(m => m._id === id);
+//   return mesero ? mesero.name : 'Sin asignar';
+// };
 
 
   return (
@@ -328,7 +302,7 @@ useEffect(() => {
               <div className="flex items-center gap-2">
                 <UserCheck size={24} />
                 <div>
-                  <p className="text-2xl font-bold">{clientesActuales}/{capacidadTotal}</p>
+                  <p className="text-2xl font-bold">{capacidadTotal}</p>
                   <p className="text-sm">Ocupación</p>
                 </div>
               </div>
@@ -374,14 +348,6 @@ useEffect(() => {
                   {mesa.estado === 'ocupada' && (
                     <div className="flex justify-between">
                       <span className="text-gray-600">Clientes:</span>
-                      <span className="font-medium">{mesa.clientesActuales}</span>
-                    </div>
-                  )}
-
-                  {mesa.meseroAsignado && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Mesero:</span>
-                      <span className="font-medium text-xs">{obtenerNombreMesero(mesa.meseroAsignado)}</span>
                     </div>
                   )}
 
@@ -489,37 +455,6 @@ useEffect(() => {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1">Mesero Asignado</label>
-                  <select
-                    name="meseroAsignado"
-                    value={formularioData.meseroAsignado}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded-lg"
-                  >
-                    <option value="">Sin asignar</option>
-                    {meseros.map(mesero => (
-                      <option key={mesero._id} value={mesero._id}>
-                        {mesero.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {formularioData.estado === 'ocupada' && (
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Clientes Actuales</label>
-                    <input
-                      type="number"
-                      name="clientesActuales"
-                      value={formularioData.clientesActuales}
-                      onChange={handleInputChange}
-                      min="0"
-                      max={formularioData.capacidad}
-                      className="w-full p-2 border rounded-lg"
-                    />
-                  </div>
-                )}
               </div>
 
               <div className="mt-4">

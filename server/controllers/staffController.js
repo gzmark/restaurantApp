@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Staff = require('../models/staffModel');
+const bcrypt = require('bcrypt');
 
 // @desc    Get all staff
 // @route   GET /api/staff
@@ -32,10 +33,19 @@ const createStaff = asyncHandler(async (req, res) => {
     throw new Error('Name, email, password, and role are required');
   }
 
+  const existingStaff = await Staff.findOne({ email });
+  if (existingStaff) {
+    res.status(400);
+    throw new Error('Email already exists');
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
   const newStaff = await Staff.create({
     name,
     email,
-    password,
+    password : hashedPassword,
     role,
     telefono,
     fechaNacimiento,

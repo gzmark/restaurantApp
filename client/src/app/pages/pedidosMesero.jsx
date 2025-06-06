@@ -49,10 +49,17 @@ const PedidosMesero = () => {
     const enviarPedido = async () => {
     try {
       const payload = {
-        mesa: id,
-        productos: pedido.map(p => ({ producto: p._id, cantidad: p.cantidad })),
+        mesa: "666000000000000000000001",
+        mesero: "666000000000000000000002",
+        //productos: pedido.map(p => ({ producto: p._id, cantidad: p.cantidad })),
+      productos: [
+        {
+          producto: "666000000000000000000003",  // fake ObjectId
+          cantidad: 0
+        }
+      ],
         total: totalPedido,
-        estado: 'activo'
+        estado: 'finalizado'
       };
       const nuevoPedido = await crearPedido(payload);
       // para simular que se paga directamente tras crear pedido

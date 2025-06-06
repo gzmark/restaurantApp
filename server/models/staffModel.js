@@ -4,7 +4,7 @@ const staffSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'mesero'], required: true },
+  role: { type: String, enum: ['admin', 'mesero'], required: true , default: 'mesero' },
   telefono: String,
   fechaNacimiento: Date,
   mesasAsignadas: [String], // Números de mesa

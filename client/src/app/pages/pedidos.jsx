@@ -96,11 +96,11 @@ const VistaPedidos = () => {
                   <td className="px-4 py-3">{pedido.mesero?.name || 'N/A'}</td>
                   <td className="px-4 py-3">{new Date(pedido.fecha).toLocaleDateString()}</td>
                   <td className="px-4 py-3">${pedido.total?.toFixed(2) || 0}</td>
-                  <td className={`px-4 py-3 font-semibold ${pedido.estado === 'Finalizado' ? 'text-green-400' : 'text-yellow-400'}`}>
+                  <td className={`px-4 py-3 font-semibold ${pedido.estado === 'finalizado' ? 'text-green-400' : 'text-yellow-400'}`}>
                     {pedido.estado}
                   </td>
                   <td className="px-4 py-3">
-                    {pedido.estado === 'Finalizado' && (
+                    {pedido.estado === 'finalizado' && (
                       <button
                         onClick={() => handleEliminar(pedido._id)}
                         className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md transition"

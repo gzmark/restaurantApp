@@ -13,24 +13,26 @@ import GestionMesas from './app/pages/mesas'; // Nueva importación
 
 export default function App() {
 
-    const login = async (newLogin) => {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newLogin),
-    });
-  if (!res.ok) {
-    throw new Error("Login failed");
-  }
-  return res.json(); // return user or token or whatever you need
-};
+  //   const login = async (newLogin) => {
+  //   const res = await fetch('/api/auth/login', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(newLogin),
+  //   });
+  // if (!res.ok) {
+  //   throw new Error("Login failed");
+  // }
+  // return res.json(); // return user or token or whatever you need
+  // };
 
+  //<Route path="/" element={<Login setIsLoggedIn={login} />} />
+  
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login setIsLoggedIn={login} />} />
+        <Route path="/" element={<Login />} />
         <Route path="/home" element={<DashboardAdmin />} />
         <Route path="/homeMesero" element={<DashboardMesero />} />
         <Route path="/usuarios" element={<VistaUsuarios />} />

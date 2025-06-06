@@ -18,6 +18,16 @@ export const loginUser = async (credentials) => {
   return res.json();
 };
 
+export const loginStaff = async (credentials) => {
+  const res = await fetch(`${API_URL}/auth/loginStaff`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(credentials)
+  });
+  if (!res.ok) throw new Error('Login fallido');
+  return res.json();
+};
+
 // USUARIOS (meseros y admin)
 export const fetchUsuarios = async () => {
   const res = await fetch(`${API_URL}/staff`, { headers: headers() });

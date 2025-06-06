@@ -3,11 +3,14 @@ const router = express.Router();
 const {
   getPedidos,
   getPedidoById,
+  getPedidosByMesaId,
   createPedido,
   updatePedido,
   deletePedido,
   finalizarPedido
 } = require('../controllers/orderController');
+
+router.get('/mesa/:mesaId', getPedidosByMesaId);
 
 router.route('/')
   .get(getPedidos)

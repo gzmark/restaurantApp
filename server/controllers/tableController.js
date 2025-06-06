@@ -12,8 +12,8 @@ const getMesaById = async (req, res) => {
 };
 
 const createMesa = async (req, res) => {
-  const { numero, capacidad, estado, ubicacion, observaciones, meseroAsignado } = req.body;
-  const nuevaMesa = await Mesa.create({ numero, capacidad, estado, ubicacion, observaciones, meseroAsignado });
+  const { numero, capacidad, estado, ubicacion, observaciones } = req.body;
+  const nuevaMesa = await Mesa.create({ numero, capacidad, estado, ubicacion, observaciones });
   res.status(201).json(nuevaMesa);
 };
 
