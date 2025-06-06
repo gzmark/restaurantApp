@@ -10,6 +10,60 @@ export default function Login( ) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+    const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const res = await fetch("http://localhost:8000/api/auth/loginStaff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
+      localStorage.setItem("token", data.token);
+      const decoded = jwtDecode(data.token);
+      // Redirect based on role
+      if (decoded.staff.role === "admin") {
+        navigate("/home");
+      } else if (decoded.staff.role === "mesero") {
+        navigate("/homeMesero");
+      } else {
+        setError("Invalid role");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+
+// const handleLogin = async (e) => {
+//   e.preventDefault();
+//   setError('');
+
+//   try {
+//     const res = await fetch('http://localhost:8000/api/auth/loginStaff', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ email, password }),
+//     });
+
+//     const data = await res.json();
+
+//     if (!res.ok) throw new Error(data.message || 'Login failed');
+
+//     if (data.role === 'admin') {
+//       navigate('/home');
+//     } else if (data.role === 'mesero') {
+//       navigate('/homeMesero');
+//     } else {
+//       setError('Unknown role');
+//     }
+//   } catch (err) {
+//     setError(err.message || 'Login error');
+//   }
+// };
+
 //   const handleLogin = async (e) => {
 //     e.preventDefault();
 //     const credentials = {
@@ -28,34 +82,6 @@ export default function Login( ) {
 //     // optionally display error message to user
 //   }
 // };
-
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setError('');
-
-  try {
-    const res = await fetch('http://localhost:8000/api/auth/loginStaff', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.message || 'Login failed');
-
-    if (data.role === 'admin') {
-      navigate('/home');
-    } else if (data.role === 'mesero') {
-      navigate('/homeMesero');
-    } else {
-      setError('Unknown role');
-    }
-  } catch (err) {
-    setError(err.message || 'Login error');
-  }
-};
-
 
   return (
     <div

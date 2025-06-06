@@ -35,27 +35,55 @@ const loginUser = asyncHandler(async (req, res) => {
         }
 });
 
-const loginStaff = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
+  const loginStaff = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400);
+      throw new Error("Missing required fields");
+    }
+    const staff = await staffModel.findOne({ email });
+    if (staff && (await bcrypt.compare(password, staff.password))) {
+      const token = jwt.sign(
+        {
+          staff: {
+            name: staff.name,
+            email: staff.email,
+            id: staff.id,
+            role: staff.role,
+          },
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "1h" }
+      );
+      res.status(200).json({ token, role: staff.role });
+    } else {
+      res.status(401);
+      throw new Error("Invalid password or staff not found");
+    }
+  });
 
-  const staff = await staffModel.findOne({ email });
+// const loginStaff = asyncHandler(async (req, res) => {
+//   const { email, password } = req.body;
 
-  if (!staff) {
-    return res.status(401).json({ message: 'Staff not found' });
-  }
+//   if (!email || !password) {
+//     return res.status(400).json({ message: 'Missing required fields' });
+//   }
 
-  const isMatch = await bcrypt.compare(password, staff.password);
+//   const staff = await staffModel.findOne({ email });
 
-  if (!isMatch) {
-    return res.status(401).json({ message: 'Invalid password' });
-  }
+//   if (!staff) {
+//     return res.status(401).json({ message: 'Staff not found' });
+//   }
 
-  res.status(200).json({ role: staff.role });
-});
+//   const isMatch = await bcrypt.compare(password, staff.password);
+
+//   if (!isMatch) {
+//     return res.status(401).json({ message: 'Invalid password' });
+//   }
+
+//   res.status(200).json({ role: staff.role });
+// });
 
 
 // const loginStaff = asyncHandler(async (req, res) => {
