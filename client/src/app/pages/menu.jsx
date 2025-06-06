@@ -2,61 +2,16 @@ import React, { useState, useEffect } from 'react';
 import HeaderDs from '@/app/components/header';
 import Menu from '@/app/components/menu';
 import { fetchProductos, crearProducto, eliminarProducto, actualizarProducto } from '@/api/api';
-import { Plus, X, Utensils, Edit, Trash2, Search, Filter } from 'lucide-react';
+import { Plus, X, Utensils, Edit, Trash2, Search, Filter, ImageIcon } from 'lucide-react';
 
 const GestionMenu = () => {
-  const [platillos, setPlatillos] = useState([
-    // { 
-    //   id: 1, 
-    //   nombre: 'Pizza Margherita', 
-    //   descripcion: 'Pizza clásica con tomate, mozzarella y albahaca fresca', 
-    //   precio: 180, 
-    //   categoria: 'comida', 
-    //   disponible: true,
-    //   imagen: 'pizza-margherita.jpg'
-    // },
-    // { 
-    //   id: 2, 
-    //   nombre: 'Hamburguesa Clásica', 
-    //   descripcion: 'Carne de res, lechuga, tomate, cebolla y salsa especial', 
-    //   precio: 150, 
-    //   categoria: 'comida', 
-    //   disponible: true,
-    //   imagen: 'hamburguesa-clasica.jpg'
-    // },
-    // { 
-    //   id: 3, 
-    //   nombre: 'Coca Cola', 
-    //   descripcion: 'Refresco de cola 355ml', 
-    //   precio: 30, 
-    //   categoria: 'bebida', 
-    //   disponible: true,
-    //   imagen: 'coca-cola.jpg'
-    // },
-    // { 
-    //   id: 4, 
-    //   nombre: 'Agua Natural', 
-    //   descripcion: 'Agua purificada 500ml', 
-    //   precio: 20, 
-    //   categoria: 'bebida', 
-    //   disponible: true,
-    //   imagen: 'agua-natural.jpg'
-    // },
-    // { 
-    //   id: 5, 
-    //   nombre: 'Tacos al Pastor', 
-    //   descripcion: 'Orden de 4 tacos con carne al pastor, piña, cebolla y cilantro', 
-    //   precio: 80, 
-    //   categoria: 'comida', 
-    //   disponible: false,
-    //   imagen: 'tacos-pastor.jpg'
-    // }
-  ]);
+  const [platillos, setPlatillos] = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [platilloEditando, setPlatilloEditando] = useState(null);
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [filtroCategoria, setFiltroCategoria] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
+  const [mostrarSelectorImagenes, setMostrarSelectorImagenes] = useState(false);
   
   // Estado del formulario
   const [formulario, setFormulario] = useState({
@@ -76,7 +31,22 @@ const GestionMenu = () => {
     { value: 'entrada', label: 'Entrada' }
   ];
 
-    useEffect(() => {
+  // Lista de imágenes disponibles
+  const imagenesDisponibles = [
+    { id: 1, nombre: '1.jpeg', ruta: '/imagenes/1.jpeg' },
+    { id: 2, nombre: '2.jpeg', ruta: '/src/Imagenes/2.jpg' },
+    { id: 3, nombre: '3.jpeg', ruta: '/src/Imagenes/3.jpg' },
+    { id: 4, nombre: '4.jpeg', ruta: '/src/Imagenes/4.jpg' },
+    { id: 5, nombre: '5.jpeg', ruta: '/src/Imagenes/5.jpg' },
+    { id: 6, nombre: '6.jpeg', ruta: '/src/Imagenes/6.jpg' },
+    { id: 7, nombre: '7.jpeg', ruta: '/src/Imagenes/7.jpg' },
+    { id: 8, nombre: '8.jpeg', ruta: '/src/Imagenes/8.jpeg' },
+    { id: 9, nombre: '9.jpeg', ruta: '/src/Imagenes/9.jpeg' },
+    { id: 10, nombre: '10.jpeg', ruta: '/src/Imagenes/10.jpeg' },
+    { id: 11, nombre: '11.jpeg', ruta: '/src/Imagenes/11.jpeg' }
+  ];
+
+  useEffect(() => {
     fetchProductos().then(setPlatillos).catch(console.error);
   }, []);
 
@@ -115,6 +85,7 @@ const GestionMenu = () => {
   const cerrarFormulario = () => {
     setMostrarFormulario(false);
     setPlatilloEditando(null);
+    setMostrarSelectorImagenes(false);
   };
 
   const manejarCambio = (campo, valor) => {
@@ -122,6 +93,14 @@ const GestionMenu = () => {
       ...prev,
       [campo]: valor
     }));
+  };
+
+  const seleccionarImagen = (imagen) => {
+    setFormulario(prev => ({
+      ...prev,
+      imagen: imagen.nombre
+    }));
+    setMostrarSelectorImagenes(false);
   };
 
   const guardarPlatillo = async () => {
@@ -399,15 +378,26 @@ const GestionMenu = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Nombre de la imagen
+                        Imagen del Platillo
                       </label>
-                      <input
-                        type="text"
-                        value={formulario.imagen}
-                        onChange={(e) => manejarCambio('imagen', e.target.value)}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#f3ca52] focus:border-transparent"
-                        placeholder="imagen.jpg"
-                      />
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={formulario.imagen}
+                          onChange={(e) => manejarCambio('imagen', e.target.value)}
+                          className="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-[#f3ca52] focus:border-transparent"
+                          placeholder="Selecciona una imagen..."
+                          readOnly
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setMostrarSelectorImagenes(true)}
+                          className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                        >
+                          <ImageIcon size={16} />
+                          Seleccionar
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -437,6 +427,71 @@ const GestionMenu = () => {
                     className="flex-1 px-4 py-3 bg-gradient-to-r from-orange-500 to-yellow-400 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
                   >
                     {platilloEditando ? 'Actualizar' : 'Guardar'} Platillo
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Selector de Imágenes */}
+        {mostrarSelectorImagenes && (
+          <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/60 z-60 p-4">
+            <div className="bg-white rounded-xl w-full max-w-4xl shadow-2xl max-h-[80vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <ImageIcon size={24} />
+                    Seleccionar Imagen del Platillo
+                  </h3>
+                  <button
+                    onClick={() => setMostrarSelectorImagenes(false)}
+                    className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {imagenesDisponibles.map(imagen => (
+                    <div 
+                      key={imagen.id}
+                      className="relative group cursor-pointer transform transition-all duration-200 hover:scale-105"
+                      onClick={() => seleccionarImagen(imagen)}
+                    >
+                      <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-[#f3ca52] transition-colors">
+                        <img
+                          src={imagen.ruta}
+                          alt={`Imagen ${imagen.nombre}`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div className="w-full h-full bg-gray-100 hidden items-center justify-center flex-col text-gray-500">
+                          <ImageIcon size={32} />
+                          <span className="text-xs mt-2">{imagen.nombre}</span>
+                        </div>
+                      </div>
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 rounded-lg flex items-center justify-center">
+                        <div className="bg-white bg-opacity-90 px-3 py-1 rounded-full text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                          Seleccionar
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-2 text-center truncate">
+                        {imagen.nombre}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
+                  <button
+                    onClick={() => setMostrarSelectorImagenes(false)}
+                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancelar
                   </button>
                 </div>
               </div>
